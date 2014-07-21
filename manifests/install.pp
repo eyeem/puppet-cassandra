@@ -1,7 +1,12 @@
 class cassandra::install {
+    exec { 'apt-get-update':
+        command => "/usr/bin/apt-get update"
+    }
+
     package { 'dsc':
         ensure => $cassandra::version,
         name   => $cassandra::package_name,
+        require => Exec['apt-get-update']
     }
 
     $python_cql_name = $::osfamily ? {
@@ -12,6 +17,7 @@ class cassandra::install {
 
     package { $python_cql_name:
         ensure => installed,
+        require => Exec['apt-get-update']
     }
 
     if ($::osfamily == 'Debian') {
